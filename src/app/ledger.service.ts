@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import NOS from "hw-app-nano";
+import { NOS } from "hw-app-nano";
 import TransportU2F from "@ledgerhq/hw-transport-u2f";
 import {Subject} from "rxjs/Subject";
 import {ApiService} from "./services/api.service";
