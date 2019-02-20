@@ -1,4 +1,4 @@
-# NanoVault
+# Noswallet
 
 Noswallet is a fully client-side signing wallet for sending and receiving [NOS](https://github.com/nanocurrency/raiblocks) 
 on your [desktop](https://github.com/cronoh/nanovault/releases) or [in your browser](https://nanovault.io)
