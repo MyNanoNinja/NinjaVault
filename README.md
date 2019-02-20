@@ -1,6 +1,6 @@
 # NanoVault
 
-NanoVault is a fully client-side signing wallet for sending and receiving [Nano](https://github.com/nanocurrency/raiblocks) 
+Noswallet is a fully client-side signing wallet for sending and receiving [NOS](https://github.com/nanocurrency/raiblocks) 
 on your [desktop](https://github.com/cronoh/nanovault/releases) or [in your browser](https://nanovault.io)
 
 ![NanoVault Screenshot](https://s3-us-west-2.amazonaws.com/nanovault.io/NanoVault-Preview.png)
