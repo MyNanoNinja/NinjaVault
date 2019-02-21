@@ -7,7 +7,7 @@ import BigNumber from "bignumber.js";
 import {NotificationService} from "./notification.service";
 import {AppSettingsService} from "./app-settings.service";
 import {WalletService} from "./wallet.service";
-import {LedgerService} from "../ledger.service";
+import {LedgerService} from "./ledger.service";
 const nacl = window['nacl'];
 
 const STATE_BLOCK_PREAMBLE = '0000000000000000000000000000000000000000000000000000000000000006';
@@ -111,7 +111,7 @@ export class NanoBlockService {
         signature = sig.signature;
       } catch (err) {
         this.clearLedgerNotification();
-        this.sendLedgerDeniedNotification();
+        this.sendLedgerDeniedNotification(err);
         return;
       }
     } else {
@@ -182,7 +182,7 @@ export class NanoBlockService {
         signature = sig.signature.toUpperCase();
       } catch (err) {
         this.notifications.removeNotification('ledger-sign');
-        this.notifications.sendWarning(`Transaction denied on Ledger device`);
+        this.notifications.sendWarning(err.message || `Transaction denied on Ledger device`);
         return;
       }
     } else {
@@ -268,8 +268,8 @@ export class NanoBlockService {
     return signature;
   }
 
-  sendLedgerDeniedNotification() {
-    this.notifications.sendWarning(`Transaction denied on Ledger device`);
+  sendLedgerDeniedNotification(err = null) {
+    this.notifications.sendWarning(err && err.message || `Transaction denied on Ledger device`);
   }
   sendLedgerNotification() {
     this.notifications.sendInfo(`Waiting for confirmation on Ledger Device...`, { identifier: 'ledger-sign', length: 0 });
