@@ -1,17 +1,17 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, ActivatedRouteSnapshot, ChildActivationEnd, Router} from "@angular/router";
-import {AddressBookService} from "../../services/address-book.service";
-import {ApiService} from "../../services/api.service";
-import {NotificationService} from "../../services/notification.service";
-import {WalletService} from "../../services/wallet.service";
-import {NOSBlockService} from "../../services/nano-block.service";
-import {AppSettingsService} from "../../services/app-settings.service";
-import {PriceService} from "../../services/price.service";
-import {UtilService} from "../../services/util.service";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, ActivatedRouteSnapshot, ChildActivationEnd, Router } from '@angular/router';
+import { AddressBookService } from '../../services/address-book.service';
+import { ApiService } from '../../services/api.service';
+import { NotificationService } from '../../services/notification.service';
+import { WalletService } from '../../services/wallet.service';
+import { NOSBlockService } from '../../services/nano-block.service';
+import { AppSettingsService } from '../../services/app-settings.service';
+import { PriceService } from '../../services/price.service';
+import { UtilService } from '../../services/util.service';
 import * as QRCode from 'qrcode';
-import BigNumber from "bignumber.js";
-import {RepresentativeService} from "../../services/representative.service";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import BigNumber from 'bignumber.js';
+import { RepresentativeService } from '../../services/representative.service';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Component({
   selector: 'app-account-details',
@@ -19,7 +19,7 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
   styleUrls: ['./account-details.component.css']
 })
 export class AccountDetailsComponent implements OnInit, OnDestroy {
-  nano = 1000000000000000000000000;
+  nos = 10000000000;
 
   accountHistory: any[] = [];
   pendingBlocks = [];
@@ -29,7 +29,7 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
   repLabel: any = '';
   addressBookEntry: any = null;
   account: any = {};
-  accountID: string = '';
+  accountID = '';
 
   walletAccount = null;
 
@@ -58,7 +58,7 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
     private wallet: WalletService,
     private util: UtilService,
     public settings: AppSettingsService,
-    private nanoBlock: NOSBlockService) { }
+    private nosBlock: NOSBlockService) { }
 
   async ngOnInit() {
     this.routerSub = this.route.events.subscribe(event => {
@@ -67,8 +67,8 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
       }
     });
     this.priceSub = this.price.lastPrice$.subscribe(event => {
-      this.account.balanceFiat = this.util.nano.rawToNOS(this.account.balance || 0).times(this.price.price.lastPrice).toNumber();
-      this.account.pendingFiat = this.util.nano.rawToNOS(this.account.pending || 0).times(this.price.price.lastPrice).toNumber();
+      this.account.balanceFiat = this.util.nos.rawToNOS(this.account.balance || 0).times(this.price.price.lastPrice).toNumber();
+      this.account.pendingFiat = this.util.nos.rawToNOS(this.account.pending || 0).times(this.price.price.lastPrice).toNumber();
     });
 
     await this.loadAccountDetails();
@@ -89,7 +89,7 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
     if ((!this.account.error && this.account.pending > 0) || this.account.error) {
       const pending = await this.api.pending(this.accountID, 25);
       if (pending && pending.blocks) {
-        for (let block in pending.blocks) {
+        for (const block in pending.blocks) {
           if (!pending.blocks.hasOwnProperty(block)) continue;
           this.pendingBlocks.push({
             account: pending.blocks[block].source,
@@ -104,15 +104,16 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
 
     // If the account doesnt exist, set the pending balance manually
     if (this.account.error) {
-      const pendingRaw = this.pendingBlocks.reduce((prev: BigNumber, current: any) => prev.plus(new BigNumber(current.amount)), new BigNumber(0));
+      const pendingRaw = this.pendingBlocks.reduce((prev: BigNumber, current: any) =>
+        prev.plus(new BigNumber(current.amount)), new BigNumber(0));
       this.account.pending = pendingRaw;
     }
 
     // Set fiat values?
-    this.account.balanceRaw = new BigNumber(this.account.balance || 0).mod(this.nano);
-    this.account.pendingRaw = new BigNumber(this.account.pending || 0).mod(this.nano);
-    this.account.balanceFiat = this.util.nano.rawToNOS(this.account.balance || 0).times(this.price.price.lastPrice).toNumber();
-    this.account.pendingFiat = this.util.nano.rawToNOS(this.account.pending || 0).times(this.price.price.lastPrice).toNumber();
+    this.account.balanceRaw = new BigNumber(this.account.balance || 0).mod(this.nos);
+    this.account.pendingRaw = new BigNumber(this.account.pending || 0).mod(this.nos);
+    this.account.balanceFiat = this.util.nos.rawToNOS(this.account.balance || 0).times(this.price.price.lastPrice).toNumber();
+    this.account.pendingFiat = this.util.nos.rawToNOS(this.account.pending || 0).times(this.price.price.lastPrice).toNumber();
     await this.getAccountHistory(this.accountID);
 
 
@@ -134,7 +135,7 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
       this.pageSize = 25;
     }
     const history = await this.api.accountHistory(account, this.pageSize, true);
-    let additionalBlocksInfo = [];
+    const additionalBlocksInfo = [];
 
     if (history && history.history && Array.isArray(history.history)) {
       this.accountHistory = history.history.map(h => {
@@ -157,7 +158,7 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
 
       if (additionalBlocksInfo.length) {
         const blocksInfo = await this.api.blocksInfo(additionalBlocksInfo.map(b => b.link));
-        for (let block in blocksInfo.blocks) {
+        for (const block in blocksInfo.blocks) {
           if (!blocksInfo.blocks.hasOwnProperty(block)) continue;
 
           const matchingBlock = additionalBlocksInfo.find(a => a.link === block);
@@ -193,7 +194,7 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
     if (!valid || valid.valid !== '1') return this.notifications.sendWarning(`Account ID is not a valid account`);
 
     try {
-      const changed = await this.nanoBlock.generateChange(this.walletAccount, repAccount, this.wallet.isLedgerWallet());
+      const changed = await this.nosBlock.generateChange(this.walletAccount, repAccount, this.wallet.isLedgerWallet());
       if (!changed) {
         this.notifications.sendError(`Error changing representative, please try again`);
         return;

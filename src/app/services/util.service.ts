@@ -37,7 +37,7 @@ export class UtilService {
     generateSeedBytes: generateSeedBytes,
     getAccountPublicKey: getAccountPublicKey,
   };
-  nano = {
+  nos = {
     nosToRaw: nosToRaw,
     rawToNOS: rawToNOS,
   };
@@ -211,7 +211,9 @@ function getPublicAccountID(accountPublicKeyBytes) {
 }
 
 function getAccountPublicKey(account) {
-  if ((!account.startsWith('nos_1') && !account.startsWith('nos_3')) || account.length !== 64) throw new Error(`Invalid NANO Account`);
+  if ((!account.startsWith('nos_1') && !account.startsWith('nos_3')) || account.length !== 64) {
+    throw new Error(`Invalid NOS Account`);
+  }
   const account_crop = account.substring(4,64);
   const isValid = /^[13456789abcdefghijkmnopqrstuwxyz]+$/.test(account_crop);
   if (!isValid) throw new Error(`Invalid account`);
@@ -286,7 +288,7 @@ const util = {
     generateSeedBytes: generateSeedBytes,
     getAccountPublicKey: getAccountPublicKey,
   },
-  nano: {
+  nos: {
     nosToRaw: nosToRaw,
     rawToNOS: rawToNOS,
   }

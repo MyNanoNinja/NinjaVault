@@ -55,7 +55,7 @@ export class SendComponent implements OnInit {
     private addressBookService: AddressBookService,
     private notificationService: NotificationService,
     private nodeApi: ApiService,
-    private nanoBlock: NOSBlockService,
+    private nosBlock: NOSBlockService,
     public price: PriceService,
     private workPool: WorkPoolService,
     public settings: AppSettingsService,
@@ -98,14 +98,14 @@ export class SendComponent implements OnInit {
     const precision = this.settings.settings.displayCurrency === 'BTC' ? 1000000 : 100;
 
     // Determine fiat value of the amount
-    const fiatAmount = this.util.nano.rawToNOS(rawAmount).times(this.price.price.lastPrice).times(precision).floor().div(precision).toNumber();
+    const fiatAmount = this.util.nos.rawToNOS(rawAmount).times(this.price.price.lastPrice).times(precision).floor().div(precision).toNumber();
     this.amountFiat = fiatAmount;
   }
 
   // An update to the fiat amount, sync the nano value based on currently selected denomination
   syncNOSPrice() {
     const fiatAmount = this.amountFiat || 0;
-    const rawAmount = this.util.nano.nosToRaw(new BigNumber(fiatAmount).div(this.price.price.lastPrice));
+    const rawAmount = this.util.nos.nosToRaw(new BigNumber(fiatAmount).div(this.price.price.lastPrice));
     this.amount = this.getAmountValueFromBase(rawAmount).toNumber();	
   }
 
@@ -178,7 +178,7 @@ export class SendComponent implements OnInit {
     this.amountRaw = this.rawAmount.mod(this.nos);
 
     // Determine fiat value of the amount
-    this.amountFiat = this.util.nano.rawToNOS(rawAmount).times(this.price.price.lastPrice).toNumber();
+    this.amountFiat = this.util.nos.rawToNOS(rawAmount).times(this.price.price.lastPrice).toNumber();
 
     // Start precopmuting the work...
     this.fromAddressBook = this.addressBookService.getAccountName(this.fromAccountID);
@@ -196,7 +196,7 @@ export class SendComponent implements OnInit {
     this.confirmingTransaction = true;
 
     try {
-      const newHash = await this.nanoBlock.generateSend(walletAccount, this.toAccountID, this.rawAmount, this.walletService.isLedgerWallet());
+      const newHash = await this.nosBlock.generateSend(walletAccount, this.toAccountID, this.rawAmount, this.walletService.isLedgerWallet());
       if (newHash) {
         this.notificationService.sendSuccess(`Successfully sent ${this.amount} ${this.selectedAmount.shortName}!`);
         this.activePanel = 'send';
@@ -242,14 +242,14 @@ export class SendComponent implements OnInit {
 
     switch (this.selectedAmount.value) {
       default:
-      case 'nos': return this.util.nano.nosToRaw(value);
+      case 'nos': return this.util.nos.nosToRaw(value);
     }
   }
 
   getAmountValueFromBase(value) {
     switch (this.selectedAmount.value) {
       default:
-      case 'nos': return this.util.nano.rawToNOS(value);
+      case 'nos': return this.util.nos.rawToNOS(value);
     }
   }
 

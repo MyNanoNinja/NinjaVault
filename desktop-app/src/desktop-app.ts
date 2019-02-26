@@ -129,35 +129,15 @@ function getApplicationMenu() {
       submenu: [
         {
           label: 'View GitHub',
-          click () { loadExternal('https://github.com/cronoh/nanovault') }
-        },
-        {
-          label: 'Submit Issue',
-          click () { loadExternal('https://github.com/cronoh/nanovault/issues/new') }
-        },
-        {type: 'separator'},
-        {
-          type: 'normal',
-          label: `NanoVault Version: ${autoUpdater.currentVersion}`,
-        },
-        {
-          label: 'View Latest Updates',
-          click () { loadExternal('https://github.com/cronoh/nanovault/releases') }
-        },
-        {type: 'separator'},
-        {
-          label: `Check for Updates...`,
-          click (menuItem, browserWindow) {
-            checkForUpdates();
-          }
-        },
+          click() { loadExternal('https://github.com/NOS-Cash/NOSvault') }
+        }
       ]
     }
   ];
 
   if (process.platform === 'darwin') {
     template.unshift({
-      label: 'NanoVault',
+      label: 'NOSVault',
       submenu: [
         {role: 'about'},
         {type: 'separator'},

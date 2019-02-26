@@ -17,7 +17,7 @@ export class PriceService {
   async getPrice(currency = 'USD') {
     if (!currency) return; // No currency defined, do not refetch
     const convertString = currency !== 'USD' && currency !== 'BTC' ? `?convert=${currency}` : ``;
-    const response: any = await this.http.get(`${this.apiUrl}ticker/nano/${convertString}`).toPromise();
+    const response: any = await this.http.get(`${this.apiUrl}ticker/xnos/${convertString}`).toPromise();
     if (!response || !response.length) {
       return this.price.lastPrice;
     }

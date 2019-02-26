@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import {WalletService} from "../../services/wallet.service";
-import {NotificationService} from "../../services/notification.service";
-import {ModalService} from "../../services/modal.service";
-import {ApiService} from "../../services/api.service";
+import { WalletService } from "../../services/wallet.service";
+import { NotificationService } from "../../services/notification.service";
+import { ModalService } from "../../services/modal.service";
+import { ApiService } from "../../services/api.service";
 import * as blake from 'blakejs';
 import BigNumber from "bignumber.js";
-import {UtilService} from "../../services/util.service";
-import {WorkPoolService} from "../../services/work-pool.service";
-import {AppSettingsService} from "../../services/app-settings.service";
-import {NOSBlockService} from "../../services/nano-block.service";
+import { UtilService } from "../../services/util.service";
+import { WorkPoolService } from "../../services/work-pool.service";
+import { AppSettingsService } from "../../services/app-settings.service";
+import { NOSBlockService } from "../../services/nano-block.service";
 const nacl = window['nacl'];
 
 @Component({
@@ -29,7 +29,7 @@ export class ReceiveComponent implements OnInit {
     private api: ApiService,
     private workPool: WorkPoolService,
     public settings: AppSettingsService,
-    private nanoBlock: NOSBlockService,
+    private nosBlock: NOSBlockService,
     private util: UtilService) { }
 
   async ngOnInit() {
@@ -105,7 +105,7 @@ export class ReceiveComponent implements OnInit {
     if (this.walletService.walletIsLocked()) return this.notificationService.sendWarning(`Wallet must be unlocked`);
     pendingBlock.loading = true;
 
-    const newBlock = await this.nanoBlock.generateReceive(walletAccount, sourceBlock, this.walletService.isLedgerWallet());
+    const newBlock = await this.nosBlock.generateReceive(walletAccount, sourceBlock, this.walletService.isLedgerWallet());
 
     if (newBlock) {
       this.notificationService.sendSuccess(`Successfully received NOS!`);

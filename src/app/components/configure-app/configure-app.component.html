@@ -13,7 +13,8 @@
             <div class="uk-form-horizontal">
 
               <div class="uk-margin">
-                <label class="uk-form-label" for="form-horizontal-select">FIAT Currency <span uk-icon="icon: info;" uk-tooltip title="Change the currency pair used when showing fiat values in the application.  Select None to hide fiat pairs."></span></label>
+                <label class="uk-form-label" for="form-horizontal-select">FIAT Currency <span uk-icon="icon: info;"
+                    uk-tooltip title="Change the currency pair used when showing fiat values in the application.  Select None to hide fiat pairs."></span></label>
                 <div class="uk-form-controls">
                   <select class="uk-select" [(ngModel)]="selectedCurrency" id="form-horizontal-select">
                     <option *ngFor="let currency of currencies" [value]="currency.value">{{ currency.name }}</option>
@@ -33,7 +34,8 @@
 
                   <div class="uk-inline uk-width-1-1">
                     <select class="uk-select" [(ngModel)]="selectedDenomination">
-                      <option *ngFor="let denomination of denominations" [value]="denomination.value">{{ denomination.name }}</option>
+                      <option *ngFor="let denomination of denominations" [value]="denomination.value">{{
+                        denomination.name }}</option>
                     </select>
                   </div>
                 </div>
@@ -126,7 +128,8 @@
             <div class="uk-form-horizontal">
 
               <div class="uk-margin">
-                <label class="uk-form-label" for="form-horizontal-select">Server Configuration <span uk-icon="icon: info;" uk-tooltip title="Change which server is used to communicate with the Nano network"></span></label>
+                <label class="uk-form-label" for="form-horizontal-select">Server Configuration <span uk-icon="icon: info;"
+                    uk-tooltip title="Change which server is used to communicate with the NOS network"></span></label>
                 <div class="uk-form-controls">
                   <select class="uk-select" [(ngModel)]="selectedServer" id="form-horizontal-select">
                     <option *ngFor="let server of serverOptions" [value]="server.value">{{ server.name }}</option>
@@ -140,16 +143,17 @@
           <div class="uk-width-1-1">
             <div class="uk-form-horizontal">
               <div class="">
-                <label class="uk-form-label uk-text-right">API Server <span uk-icon="icon: info;" uk-tooltip title="This server is used to load, cache, and enhance results from the Nano node"></span></label>
+                <label class="uk-form-label uk-text-right">API Server <span uk-icon="icon: info;" uk-tooltip title="This server is used to load, cache, and enhance results from the NOS node"></span></label>
                 <div class="uk-form-controls">
 
                   <div class="uk-inline uk-width-1-1" *ngIf="!showServerConfigs()">
-                    <strong>https://nanovault.io/api/node-api</strong>
+                    <strong>https://vault.nos.cash/api/node-api</strong>
                   </div>
                   <div class="uk-inline uk-width-1-1" *ngIf="showServerConfigs()">
-                    <input [(ngModel)]="serverAPI" class="uk-input uk-margin-small-bottom" type="text" placeholder="https://nanovault.io/api/node-api">
+                    <input [(ngModel)]="serverAPI" class="uk-input uk-margin-small-bottom" type="text" placeholder="https://vault.nos.cash/api/node-api">
                     <span class="uk-text-meta">
-                      This server must be running the <a href="https://github.com/cronoh/nanovault-server" target="_blank">NanoVault Server</a> application, or an API compliant with it.<br>
+                      This server must be running the <a href="https://github.com/cronoh/nanovault-server" target="_blank">NanoVault
+                        Server</a> application, or an API compliant with it.<br>
                       Timestamps in the application are dependant on this server's access to them.
                     </span>
                   </div>
@@ -161,7 +165,8 @@
           <div class="uk-width-1-1">
             <div class="uk-form-horizontal">
               <div class="">
-                <label class="uk-form-label uk-text-right">Override Nano Node <span uk-icon="icon: info;" uk-tooltip title="Override which node is used by the API Server to communicate with the Nano network"></span></label>
+                <label class="uk-form-label uk-text-right">Override NOS Node <span uk-icon="icon: info;" uk-tooltip
+                    title="Override which node is used by the API Server to communicate with the NOS network"></span></label>
                 <div class="uk-form-controls">
 
                   <div class="uk-inline uk-width-1-1">
@@ -172,8 +177,10 @@
                     <div class="uk-inline uk-width-1-1" *ngIf="showServerConfigs()">
                       <input [(ngModel)]="serverNode" class="uk-input uk-margin-small-bottom" type="text" placeholder="http://125.32.211.54:7076">
                       <span class="uk-text-meta">
-                        This server must be exposing the <a href="https://developers.nano.org/docs/rpc/" target="_blank">Nano RPC</a> to the API server used above.<br>
-                        Requests will still be sent to the API server, but this node will be used to communicate with the network.
+                        This server must be exposing the target="_blank">NOS
+                          RPC to the API server used above.<br>
+                        Requests will still be sent to the API server, but this node will be used to communicate with
+                        the network.
                       </span>
                     </div>
                   </div>
@@ -188,14 +195,17 @@
                 <label class="uk-form-label uk-text-right">Updates Server <span uk-icon="icon: info;" uk-tooltip title="This server is used to notify the wallet in real time when new transactions arrive"></span></label>
                 <div class="uk-form-controls">
                   <div class="uk-inline uk-width-1-1" *ngIf="!showServerConfigs()">
-                    <strong>wss://ws.nanovault.io/</strong>
+<strong>wss://ws.nos.cash</strong>
                   </div>
 
                   <div class="uk-inline uk-width-1-1" *ngIf="showServerConfigs()">
-                    <input [(ngModel)]="serverWS" class="uk-input uk-margin-small-bottom" id="form-horizontal-text2" type="text" placeholder="wss://ws.nanovault.io/">
+                    <input [(ngModel)]="serverWS" class="uk-input uk-margin-small-bottom" id="form-horizontal-text2"
+type="text" placeholder="wss://ws.nos.cash">
                     <span class="uk-text-meta">
-                      This server must be running the <a href="https://github.com/cronoh/nanovault-ws" target="_blank">NanoVault Websocket</a> application, or a WebSocket API compliant with it.<br>
-                      <i>Note: Since this server only notifies about new transactions, most of the wallet functions fine without it.</i>
+                      This server must be running the <a href="https://github.com/cronoh/nanovault-ws" target="_blank">NanoVault
+                        Websocket</a> application, or a WebSocket API compliant with it.<br>
+                      <i>Note: Since this server only notifies about new transactions, most of the wallet functions
+                        fine without it.</i>
                     </span>
                   </div>
                 </div>
@@ -219,18 +229,21 @@
         <div uk-grid>
 
           <div class="uk-width-1-3@m">
-            <button class="uk-button uk-button-danger" (click)="clearWorkCache()" uk-tooltip title="This will delete all locally cached Proof of Work values">Clear Work Cache</button>
+            <button class="uk-button uk-button-danger" (click)="clearWorkCache()" uk-tooltip title="This will delete all locally cached Proof of Work values">Clear
+              Work Cache</button>
           </div>
           <div class="uk-width-1-3@m">
-            <button class="uk-button uk-button-danger" (click)="clearWalletData()" uk-tooltip title="This will delete all data related to your wallet (Your seed and accounts)">Delete Wallet Data</button>
+            <button class="uk-button uk-button-danger" (click)="clearWalletData()" uk-tooltip title="This will delete all data related to your wallet (Your seed and accounts)">Delete
+              Wallet Data</button>
           </div>
           <div class="uk-width-1-3@m">
-            <button class="uk-button uk-button-danger" (click)="clearAllData()" uk-tooltip title="This will delete ALL stored data, including your wallet, address book, settings and more.">Delete ALL Data</button>
+            <button class="uk-button uk-button-danger" (click)="clearAllData()" uk-tooltip title="This will delete ALL stored data, including your wallet, address book, settings and more.">Delete
+              ALL Data</button>
           </div>
         </div>
       </div>
       <!--<div class="uk-card-footer uk-text-right">-->
-        <!--<button (click)="updateWalletSettings()" class="uk-button uk-button-secondary">Update Wallet Settings</button>-->
+      <!--<button (click)="updateWalletSettings()" class="uk-button uk-button-secondary">Update Wallet Settings</button>-->
       <!--</div>-->
     </div>
 
