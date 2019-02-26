@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import {AppSettingsService} from "./app-settings.service";
+import { AppSettingsService } from "./app-settings.service";
 
 @Injectable()
 export class WebsocketService {
@@ -23,10 +23,25 @@ export class WebsocketService {
 
   constructor(private appSettings: AppSettingsService) { }
 
+  forceReconnect() {
+    if (this.socket.connected && this.socket.ws) {
+      // Override the onclose event so it doesnt try to reconnect the old instance
+      this.socket.ws.onclose = event => {
+      };
+      this.socket.ws.close();
+      delete this.socket.ws;
+      this.socket.connected = false;
+    }
+
+    setTimeout(() => this.connect(), 250);
+  }
+
   connect() {
     if (this.socket.connected && this.socket.ws) return;
     delete this.socket.ws; // Maybe this will erase old connections
-    const ws = new WebSocket('wss://ws.nos.cash');
+
+    const wsUrl = this.appSettings.settings.serverWS || 'wss://ws.nos.cash';
+    const ws = new WebSocket(wsUrl);
     this.socket.ws = ws;
 
     ws.onopen = event => {
