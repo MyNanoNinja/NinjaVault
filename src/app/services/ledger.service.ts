@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Nano from "hw-app-nano";
+import { NOS } from "hw-app-nano";
 import TransportU2F from "@ledgerhq/hw-transport-u2f";
 import {Subject} from "rxjs/Subject";
 import {ApiService} from "./api.service";
@@ -228,13 +228,13 @@ export class LedgerService {
       // Load nano object
       if (!this.ledger.nano) {
         try {
-          this.ledger.nano = new Nano(this.ledger.transport);
+          this.ledger.nano = new NOS(this.ledger.transport);
         } catch (err) {
-          console.log(`Nano error: `, err);
+          console.log(`NOS error: `, err);
           if (err.statusText == 'UNKNOWN_ERROR') {
             this.resetLedger();
           }
-          this.ledgerStatus$.next({ status: this.ledger.status, statusText: `Error loading Nano USB transport` });
+          this.ledgerStatus$.next({ status: this.ledger.status, statusText: `Error loading NOS USB transport` });
           return resolve(false);
         }
       }
@@ -249,9 +249,9 @@ export class LedgerService {
         if (resolved) return;
         console.log(`Timeout expired, sending not connected`);
         this.ledger.status = LedgerStatus.NOT_CONNECTED;
-        this.ledgerStatus$.next({ status: this.ledger.status, statusText: `Unable to detect Nano Ledger application (Timeout)` });
+        this.ledgerStatus$.next({ status: this.ledger.status, statusText: `Unable to detect NOS Ledger application (Timeout)` });
         if (!hideNotifications) {
-          this.notifications.sendWarning(`Unable to connect to the Ledger device.  Make sure it is unlocked and the Nano application is open`);
+          this.notifications.sendWarning(`Unable to connect to the Ledger device.  Make sure it is unlocked and the NOS application is open`);
         }
         resolved = true;
         return resolve(false);
@@ -265,7 +265,7 @@ export class LedgerService {
         if (!ledgerConfig || !ledgerConfig) return resolve(false);
         if (ledgerConfig && ledgerConfig.version) {
           this.ledger.status = LedgerStatus.LOCKED;
-          this.ledgerStatus$.next({ status: this.ledger.status, statusText: `Nano app detected, but ledger is locked` });
+          this.ledgerStatus$.next({ status: this.ledger.status, statusText: `NOS app detected, but ledger is locked` });
         }
       } catch (err) {
         console.log(`App config error: `, err);
@@ -273,7 +273,7 @@ export class LedgerService {
           this.resetLedger();
         }
         if (!hideNotifications && !resolved) {
-          this.notifications.sendWarning(`Ledger device locked.  Unlock and open the Nano application`);
+          this.notifications.sendWarning(`Ledger device locked.  Unlock and open the NOS application`);
         }
         return resolve(false);
       }
@@ -282,7 +282,7 @@ export class LedgerService {
       try {
         const accountDetails = await this.getLedgerAccount(0);
         this.ledger.status = LedgerStatus.READY;
-        this.ledgerStatus$.next({ status: this.ledger.status, statusText: `Nano Ledger application connected` });
+        this.ledgerStatus$.next({ status: this.ledger.status, statusText: `NOS Ledger application connected` });
 
         if (!this.pollingLedger) {
           this.pollingLedger = true;
@@ -292,7 +292,7 @@ export class LedgerService {
         console.log(`Error on account details: `, err);
         if (err.statusCode === STATUS_CODES.SECURITY_STATUS_NOT_SATISFIED) {
           if (!hideNotifications) {
-            this.notifications.sendWarning(`Ledger device locked.  Unlock and open the Nano application`);
+            this.notifications.sendWarning(`Ledger device locked.  Unlock and open the NOS application`);
           }
         }
       }

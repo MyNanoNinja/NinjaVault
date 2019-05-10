@@ -1,5 +1,5 @@
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
-import Nano from 'hw-app-nano';
+import { NOS } from "hw-app-nano";
 
 import * as rx from 'rxjs';
 
@@ -51,7 +51,7 @@ export class LedgerService {
     this.setLedgerStatus(LedgerStatus.NOT_CONNECTED, errorMessage);
   }
 
-  // Open a connection to the usb device and initialize up the Nano Ledger library
+  // Open a connection to the usb device and initialize up the Nos Ledger library
   async loadTransport() {
     return new Promise((resolve, reject) => {
       TransportNodeHid.create().then(trans => {
@@ -59,7 +59,7 @@ export class LedgerService {
         this.ledger.transport = trans;
         this.ledger.transport.setDebugMode(true);
         this.ledger.transport.setExchangeTimeout(this.waitTimeout); // 5 minutes
-        this.ledger.nano = new Nano(this.ledger.transport);
+        this.ledger.nano = new NOS(this.ledger.transport);
 
         resolve(this.ledger.transport);
       }).catch(reject);
