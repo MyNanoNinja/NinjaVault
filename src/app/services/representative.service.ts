@@ -85,7 +85,7 @@ export class RepresentativeService {
   defaultRepresentatives = [
     {
       id: 'nos_11z6biqiug5k31448uy38f48q9qgm714153k7spyfpb9qnwrobd6udirkbwe',
-      name: 'Officiel Rep 1',
+      name: 'Official Rep 1',
       trusted: true,
     },
     {

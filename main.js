@@ -54,7 +54,7 @@ app.on('ready', () => {
   // Once the app is ready, launch the wallet window
   createWindow();
 
-  // Detect when the application has been loaded using an xrb: link, send it to the wallet to load
+  // Detect when the application has been loaded using an nos: link, send it to the wallet to load
   app.on('open-url', (event, path) => {
     if (!mainWindow) {
       createWindow();
