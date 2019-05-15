@@ -153,6 +153,11 @@ export class NOSBlockService {
     let workBlock = null;
 
     const openEquiv = !toAcct || !toAcct.frontier;
+    if (!toAcct) {
+      console.log('Got account info: ', toAcct);
+    } else {
+      console.log('Unopened account');
+    }
 
     const previousBlock = toAcct.frontier || '0000000000000000000000000000000000000000000000000000000000000000';
     const representative = toAcct.representative || walletAccount.id;
