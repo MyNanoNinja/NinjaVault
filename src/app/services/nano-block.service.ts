@@ -155,7 +155,7 @@ export class NOSBlockService {
     const openEquiv = !toAcct || !toAcct.frontier;
 
     const previousBlock = toAcct.frontier || '0000000000000000000000000000000000000000000000000000000000000000';
-    const representative = toAcct.representative || this.representativeAccount;
+    const representative = toAcct.representative || walletAccount.id;
 
     const srcBlockInfo = await this.api.blocksInfo([sourceBlock]);
     const srcAmount = new BigNumber(srcBlockInfo.blocks[sourceBlock].amount);
