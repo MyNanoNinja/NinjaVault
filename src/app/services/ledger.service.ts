@@ -340,7 +340,6 @@ export class LedgerService {
 
   async signBlock(accountIndex: number, blockData: any) {
     console.log('Account index is: ', accountIndex);
-    console.log('Block data is: ', blockData);
     if (this.ledger.status !== LedgerStatus.READY) {
       await this.loadLedger(); // Make sure ledger is ready
     }
@@ -349,7 +348,10 @@ export class LedgerService {
     } else {
       this.ledger.transport.setExchangeTimeout(this.waitTimeout);
       console.log('Block is being signed...');
-      const sig = await this.ledger.nano.signBlock(this.ledgerPath(accountIndex), blockData);
+      const newLedgerPath = this.ledgerPath(accountIndex);
+      console.log('Ledger path is: ', newLedgerPath);
+      console.log('Block data is: ', blockData);
+      const sig = await this.ledger.nano.signBlock(newLedgerPath, blockData);
       console.log('Done: ', sig);
       return sig;
     }
@@ -357,7 +359,6 @@ export class LedgerService {
 
   ledgerPath(accountIndex: number) {
     const newLedgerPath = `${this.walletPrefix}${accountIndex}'`;
-    console.log('Ledger path is: ', newLedgerPath);
     return newLedgerPath;
   }
 
