@@ -163,7 +163,7 @@ export class NOSBlockService {
     const newBalanceDecimal = newBalance.toString(10);
     let newBalancePadded = newBalance.toString(16);
     while (newBalancePadded.length < 32) { newBalancePadded = '0' + newBalancePadded; } // Left pad with 0's
-
+    console.log('Preprocessing ready, new balance: ', newBalancePadded);
     // We have everything we need, we need to obtain a signature
     let signature = null;
     if (ledger) {
@@ -181,11 +181,13 @@ export class NOSBlockService {
         if (!openEquiv) {
           await this.ledgerService.updateCache(walletAccount.index, toAcct.frontier);
         }
+        console.log('Ledger is signing...');
         const sig = await this.ledgerService.signBlock(walletAccount.index, ledgerBlock);
         this.notifications.removeNotification('ledger-sign');
         signature = sig.signature.toUpperCase();
+        console.log('Signature is: ', signature);
       } catch (err) {
-        console.log('Generate receive error', err, err.message);
+        console.log('Generate receive error: ', err, err.message);
         this.notifications.removeNotification('ledger-sign');
         this.notifications.sendWarning(err.message || `Transaction denied on Ledger device`);
         return;
