@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as Rx from 'rxjs';
 
-type NotificationType = 'info'|'success'|'warning'|'error';
+type NotificationType = 'info' | 'success' | 'warning' | 'error';
 
 @Injectable()
 export class NotificationService {
@@ -22,16 +22,16 @@ export class NotificationService {
     this.removeNotification$.next(identifier);
   }
 
-  sendInfo(message:string, options = {}) {
+  sendInfo(message: string, options = {}) {
     this.sendNotification('info', message, options);
   }
-  sendSuccess(message:string, options = {}) {
+  sendSuccess(message: string, options = {}) {
     this.sendNotification('success', message, options);
   }
-  sendWarning(message:string, options = {}) {
+  sendWarning(message: string, options = {}) {
     this.sendNotification('warning', message, options);
   }
-  sendError(message:string, options = {}) {
+  sendError(message: string, options = {}) {
     this.sendNotification('error', message, options);
   }
 
