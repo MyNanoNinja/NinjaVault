@@ -183,9 +183,9 @@ export class NOSBlockService {
         }
         console.log('Ledger is signing...');
         const sig = await this.ledgerService.signBlock(walletAccount.index, ledgerBlock);
+        console.log('Signature is: ', sig);
         this.notifications.removeNotification('ledger-sign');
         signature = sig.signature.toUpperCase();
-        console.log('Signature is: ', signature);
       } catch (err) {
         console.log('Generate receive error: ', err, err.message);
         this.notifications.removeNotification('ledger-sign');
