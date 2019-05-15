@@ -356,7 +356,9 @@ export class LedgerService {
   }
 
   ledgerPath(accountIndex: number) {
-    return `${this.walletPrefix}${accountIndex}'`;
+    const newLedgerPath = `${this.walletPrefix}${accountIndex}'`;
+    console.log('Ledger path is: ', newLedgerPath);
+    return newLedgerPath;
   }
 
   async getLedgerAccountWeb(accountIndex: number, showOnScreen = false) {
