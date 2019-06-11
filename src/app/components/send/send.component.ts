@@ -44,10 +44,10 @@ export class SendComponent implements OnInit {
   fromAccountID: any = '';
   fromAddressBook = '';
   toAccount: any = false;
-  toAccountID: string = '';
+  toAccountID = '';
   toAddressBook = '';
   toAccountStatus = null;
-  confirmingTransaction: boolean = false;
+  confirmingTransaction = false;
 
   constructor(
     private router: ActivatedRoute,
@@ -106,7 +106,7 @@ export class SendComponent implements OnInit {
   syncNOSPrice() {
     const fiatAmount = this.amountFiat || 0;
     const rawAmount = this.util.nos.nosToRaw(new BigNumber(fiatAmount).div(this.price.price.lastPrice));
-    this.amount = this.getAmountValueFromBase(rawAmount).toNumber();	
+    this.amount = this.getAmountValueFromBase(rawAmount).toNumber();
   }
 
   searchAddressBook() {
@@ -175,7 +175,7 @@ export class SendComponent implements OnInit {
     if (from.balanceBN.minus(rawAmount).lessThan(0)) return this.notificationService.sendError(`From account does not have enough funds`);
 
     // Determine a proper raw amount to show in the UI, if a decimal was entered
-    // this.amountRaw = this.rawAmount.mod(this.nos);
+    this.amountRaw = this.rawAmount.mod(this.nos);
 
     // Determine fiat value of the amount
     this.amountFiat = this.util.nos.rawToNOS(rawAmount).times(this.price.price.lastPrice).toNumber();

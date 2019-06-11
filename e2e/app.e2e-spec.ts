@@ -1,6 +1,6 @@
 import { AppPage } from './app.po';
 
-describe('raivault App', () => {
+describe('nosvault App', () => {
   let page: AppPage;
 
   beforeEach(() => {
