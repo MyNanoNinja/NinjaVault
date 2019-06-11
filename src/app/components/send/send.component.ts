@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import BigNumber from "bignumber.js";
-import {AddressBookService} from "../../services/address-book.service";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {WalletService} from "../../services/wallet.service";
-import {NotificationService} from "../../services/notification.service";
-import {ApiService} from "../../services/api.service";
-import {UtilService} from "../../services/util.service";
+import BigNumber from 'bignumber.js';
+import {AddressBookService} from '../../services/address-book.service';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {WalletService} from '../../services/wallet.service';
+import {NotificationService} from '../../services/notification.service';
+import {ApiService} from '../../services/api.service';
+import {UtilService} from '../../services/util.service';
 
 import * as blake from 'blakejs';
-import {WorkPoolService} from "../../services/work-pool.service";
-import {AppSettingsService} from "../../services/app-settings.service";
-import {ActivatedRoute, ActivatedRouteSnapshot} from "@angular/router";
-import {PriceService} from "../../services/price.service";
-import {NOSBlockService} from "../../services/nano-block.service";
+import {WorkPoolService} from '../../services/work-pool.service';
+import {AppSettingsService} from '../../services/app-settings.service';
+import {ActivatedRoute, ActivatedRouteSnapshot} from '@angular/router';
+import {PriceService} from '../../services/price.service';
+import {NOSBlockService} from '../../services/nano-block.service';
 
 const nacl = window['nacl'];
 
@@ -210,11 +210,11 @@ export class SendComponent implements OnInit {
         this.addressBookMatch = '';
       } else {
         if (!this.walletService.isLedgerWallet()) {
-          this.notificationService.sendError(`There was an error sending your transaction, please try again.`)
+          this.notificationService.sendError(`There was an error sending your transaction, please try again.`);
         }
       }
     } catch (err) {
-      this.notificationService.sendError(`There was an error sending your transaction: ${err.message}`)
+      this.notificationService.sendError(`There was an error sending your transaction: ${err.message}`);
     }
 
 
@@ -225,12 +225,15 @@ export class SendComponent implements OnInit {
 
   setMaxAmount() {
     const walletAccount = this.walletService.wallet.accounts.find(a => a.id === this.fromAccountID);
-    if (!walletAccount) return;
-
+    if (!walletAccount) { return; }
+    console.log('Found account: ', walletAccount);
     this.amountRaw = walletAccount.balanceRaw;
-
+    console.log('Raw balance is: ', this.amountRaw);
     const maxAmount = this.getAmountValueFromBase(this.amountRaw);
+    console.log('Max nos is: ', maxAmount);
     this.amount = maxAmount.toNumber();
+    console.log('Max nos amount is: ', this.amount);
+
     this.syncFiatPrice();
   }
 
@@ -241,14 +244,14 @@ export class SendComponent implements OnInit {
   getAmountBaseValue(value) {
 
     switch (this.selectedAmount.value) {
-      default:
+      default: return this.util.nos.nosToRaw(value);
       case 'nos': return this.util.nos.nosToRaw(value);
     }
   }
 
   getAmountValueFromBase(value) {
     switch (this.selectedAmount.value) {
-      default:
+      default: return this.util.nos.rawToNOS(value);
       case 'nos': return this.util.nos.rawToNOS(value);
     }
   }
