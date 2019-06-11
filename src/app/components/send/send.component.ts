@@ -171,11 +171,11 @@ export class SendComponent implements OnInit {
     this.rawAmount = rawAmount.plus(this.amountRaw);
 
     if (this.amount < 0 || rawAmount.lessThan(0)) return this.notificationService.sendWarning(`Amount is invalid`);
-    if (rawAmount.lessThan(1)) return this.notificationService.sendWarning(`Transactions for less than 1 cent will be ignored by the node. Send amounts with at least 0.01 USD.`);
+    // if (rawAmount.lessThan(1)) return this.notificationService.sendWarning(`Transactions for less than 1 cent will be ignored by the node. Send amounts with at least 0.01 USD.`);
     if (from.balanceBN.minus(rawAmount).lessThan(0)) return this.notificationService.sendError(`From account does not have enough funds`);
 
     // Determine a proper raw amount to show in the UI, if a decimal was entered
-    this.amountRaw = this.rawAmount.mod(this.nos);
+    // this.amountRaw = this.rawAmount.mod(this.nos);
 
     // Determine fiat value of the amount
     this.amountFiat = this.util.nos.rawToNOS(rawAmount).times(this.price.price.lastPrice).toNumber();
