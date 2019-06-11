@@ -495,13 +495,13 @@ export class WalletService {
     for (const accountID in accounts.balances) {
       if (!accounts.balances.hasOwnProperty(accountID)) continue;
       // Find the account, update it
-      const walletAccount = this.wallet.accounts.find(a => a.id == accountID);
+      const walletAccount = this.wallet.accounts.find(a => a.id === accountID);
       if (!walletAccount) continue;
       walletAccount.balance = new BigNumber(accounts.balances[accountID].balance);
       walletAccount.pending = new BigNumber(accounts.balances[accountID].pending);
 
-      walletAccount.balanceRaw = new BigNumber(walletAccount.balance).mod(this.nos);
-      walletAccount.pendingRaw = new BigNumber(walletAccount.pending).mod(this.nos);
+      walletAccount.balanceRaw = new BigNumber(walletAccount.balance);
+      walletAccount.pendingRaw = new BigNumber(walletAccount.pending);
 
       walletAccount.balanceFiat = this.util.nos.rawToNOS(walletAccount.balance).times(fiatPrice).toNumber();
       walletAccount.pendingFiat = this.util.nos.rawToNOS(walletAccount.pending).times(fiatPrice).toNumber();
@@ -529,8 +529,8 @@ export class WalletService {
     this.wallet.balance = walletBalance;
     this.wallet.pending = walletPending;
 
-    this.wallet.balanceRaw = new BigNumber(walletBalance).mod(this.nos);
-    this.wallet.pendingRaw = new BigNumber(walletPending).mod(this.nos);
+    this.wallet.balanceRaw = new BigNumber(walletBalance);
+    this.wallet.pendingRaw = new BigNumber(walletPending);
 
     this.wallet.balanceFiat = this.util.nos.rawToNOS(walletBalance).times(fiatPrice).toNumber();
     this.wallet.pendingFiat = this.util.nos.rawToNOS(walletPending).times(fiatPrice).toNumber();

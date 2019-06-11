@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import BigNumber from 'bignumber.js';
-import {AddressBookService} from '../../services/address-book.service';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {WalletService} from '../../services/wallet.service';
-import {NotificationService} from '../../services/notification.service';
-import {ApiService} from '../../services/api.service';
-import {UtilService} from '../../services/util.service';
+import { AddressBookService } from '../../services/address-book.service';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { WalletService } from '../../services/wallet.service';
+import { NotificationService } from '../../services/notification.service';
+import { ApiService } from '../../services/api.service';
+import { UtilService } from '../../services/util.service';
 
 import * as blake from 'blakejs';
-import {WorkPoolService} from '../../services/work-pool.service';
-import {AppSettingsService} from '../../services/app-settings.service';
-import {ActivatedRoute, ActivatedRouteSnapshot} from '@angular/router';
-import {PriceService} from '../../services/price.service';
-import {NOSBlockService} from '../../services/nano-block.service';
+import { WorkPoolService } from '../../services/work-pool.service';
+import { AppSettingsService } from '../../services/app-settings.service';
+import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { PriceService } from '../../services/price.service';
+import { NOSBlockService } from '../../services/nano-block.service';
 
 const nacl = window['nacl'];
 
@@ -38,7 +38,7 @@ export class SendComponent implements OnInit {
 
   amount = null;
   amountRaw = new BigNumber(0);
-  amountFiat: number|null = null;
+  amountFiat: number | null = null;
   rawAmount: BigNumber = new BigNumber(0);
   fromAccount: any = {};
   fromAccountID: any = '';
@@ -88,7 +88,8 @@ export class SendComponent implements OnInit {
 
   // An update to the NOS amount, sync the fiat value
   syncFiatPrice() {
-    const rawAmount = this.getAmountBaseValue(this.amount || 0).plus(this.amountRaw);
+    // const rawAmount = this.getAmountBaseValue(this.amount || 0).plus(this.amountRaw);
+    const rawAmount = this.getAmountBaseValue(this.amount || 0);
     if (rawAmount.lte(0)) {
       this.amountFiat = 0;
       return;
@@ -98,7 +99,8 @@ export class SendComponent implements OnInit {
     const precision = this.settings.settings.displayCurrency === 'BTC' ? 1000000 : 100;
 
     // Determine fiat value of the amount
-    const fiatAmount = this.util.nos.rawToNOS(rawAmount).times(this.price.price.lastPrice).times(precision).floor().div(precision).toNumber();
+    const fiatAmount = this.util.nos.rawToNOS(rawAmount).times(
+      this.price.price.lastPrice).times(precision).floor().div(precision).toNumber();
     this.amountFiat = fiatAmount;
   }
 
@@ -140,7 +142,7 @@ export class SendComponent implements OnInit {
     // const accountInfo = await this.walletService.walletApi.accountInfo(this.toAccountID);
     const accountInfo = await this.nodeApi.accountInfo(this.toAccountID);
     if (accountInfo.error) {
-      if (accountInfo.error == 'Account not found') {
+      if (accountInfo.error === 'Account not found') {
         this.toAccountStatus = 1;
       } else {
         this.toAccountStatus = 0;
@@ -175,7 +177,7 @@ export class SendComponent implements OnInit {
     if (from.balanceBN.minus(rawAmount).lessThan(0)) return this.notificationService.sendError(`From account does not have enough funds`);
 
     // Determine a proper raw amount to show in the UI, if a decimal was entered
-    this.amountRaw = this.rawAmount.mod(this.nos);
+    this.amountRaw = this.rawAmount;
 
     // Determine fiat value of the amount
     this.amountFiat = this.util.nos.rawToNOS(rawAmount).times(this.price.price.lastPrice).toNumber();
@@ -228,11 +230,8 @@ export class SendComponent implements OnInit {
     if (!walletAccount) { return; }
     console.log('Found account: ', walletAccount);
     this.amountRaw = walletAccount.balanceRaw;
-    console.log('Raw balance is: ', this.amountRaw);
     const maxAmount = this.getAmountValueFromBase(this.amountRaw);
-    console.log('Max nos is: ', maxAmount);
     this.amount = maxAmount.toNumber();
-    console.log('Max nos amount is: ', this.amount);
 
     this.syncFiatPrice();
   }
@@ -244,14 +243,14 @@ export class SendComponent implements OnInit {
   getAmountBaseValue(value) {
 
     switch (this.selectedAmount.value) {
-      default: return this.util.nos.nosToRaw(value);
+      default:
       case 'nos': return this.util.nos.nosToRaw(value);
     }
   }
 
   getAmountValueFromBase(value) {
     switch (this.selectedAmount.value) {
-      default: return this.util.nos.rawToNOS(value);
+      default:
       case 'nos': return this.util.nos.rawToNOS(value);
     }
   }
