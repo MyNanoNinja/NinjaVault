@@ -233,7 +233,7 @@ export class SendComponent implements OnInit {
     const maxAmount = this.getAmountValueFromBase(this.amountRaw);
     this.amount = maxAmount.toNumber();
 
-    this.syncFiatPrice();
+    // this.syncFiatPrice();
   }
 
   resetRaw() {
