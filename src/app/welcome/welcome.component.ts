@@ -11,10 +11,12 @@ export class WelcomeComponent implements OnInit {
   donationAccount = `none`;
 
   wallet = this.walletService.wallet;
+  isConfigured = this.walletService.isConfigured;
 
   constructor(private walletService: WalletService) { }
 
   ngOnInit() {
+
   }
 
 }

@@ -35,7 +35,7 @@ export class RepresentativesComponent implements OnInit {
     public wallet: WalletService,
     private api: ApiService,
     private notifications: NotificationService,
-    private nanoBlock: NOSBlockService,
+    private nosBlock: NOSBlockService,
     private util: UtilService,
     private representativeService: RepresentativeService,
     public settings: AppSettingsService) { }
@@ -66,8 +66,8 @@ export class RepresentativesComponent implements OnInit {
       const repOnline = onlineReps.indexOf(representative.account) !== -1;
       const knownRep = this.representativeService.getRepresentative(representative.account);
 
-      const nanoWeight = this.util.nano.rawToNOS(representative.weight || 0);
-      const percent = nanoWeight.div(totalSupply).times(100);
+      const nosWeight = this.util.nos.rawToNOS(representative.weight || 0);
+      const percent = nosWeight.div(totalSupply).times(100);
 
       // Determine the status based on some factors
       let status = 'none';
@@ -85,7 +85,7 @@ export class RepresentativesComponent implements OnInit {
 
       const repOverview = {
         id: representative.account,
-        weight: nanoWeight,
+        weight: nosWeight,
         delegatedWeight: representative.delegatedWeight,
         percent: percent,
         status: status,
@@ -287,7 +287,7 @@ export class RepresentativesComponent implements OnInit {
       if (!walletAccount) continue; // Unable to find account in the wallet? wat?
 
       try {
-        const changed = await this.nanoBlock.generateChange(walletAccount, newRep, this.wallet.isLedgerWallet());
+        const changed = await this.nosBlock.generateChange(walletAccount, newRep, this.wallet.isLedgerWallet());
         if (!changed) {
           this.notifications.sendError(`Error changing representative for ${account.id}, please try again`);
         }

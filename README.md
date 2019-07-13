@@ -1,6 +1,6 @@
 # NOSwallet
 
-NOSwallet is a fully client-side signing wallet for sending and receiving [NOS](https://github.com/nanocurrency/raiblocks) 
+NOSwallet is a fully client-side signing wallet for sending and receiving [NOS](https://github.com/NOS-Cash/NOSnode/tree/nos-network) 
 on your [desktop](https://github.com/NOS-Cash/NOSvault/releases) or [in your browser](https://my.nos.cash)
 
 ![NOSwallet Screenshot](https://s3-us-west-2.amazonaws.com/my.nos.cash/NOSwallet-Preview.png)

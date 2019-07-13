@@ -1,15 +1,16 @@
-import {Component, HostListener, OnInit} from '@angular/core';
-import {WalletService} from "./services/wallet.service";
-import {AddressBookService} from "./services/address-book.service";
-import {AppSettingsService} from "./services/app-settings.service";
-import {WebsocketService} from "./services/websocket.service";
-import {PriceService} from "./services/price.service";
-import {NotificationService} from "./services/notification.service";
-import {PowService} from "./services/pow.service";
-import {WorkPoolService} from "./services/work-pool.service";
-import {Router} from "@angular/router";
-import {RepresentativeService} from "./services/representative.service";
-import {NodeService} from "./services/node.service";
+import { Component, HostListener, OnInit } from '@angular/core';
+import { WalletService } from "./services/wallet.service";
+import { AddressBookService } from "./services/address-book.service";
+import { AppSettingsService } from "./services/app-settings.service";
+import { WebsocketService } from "./services/websocket.service";
+import { PriceService } from "./services/price.service";
+import { NotificationService } from "./services/notification.service";
+import { PowService } from "./services/pow.service";
+import { WorkPoolService } from "./services/work-pool.service";
+import { Router } from "@angular/router";
+import { RepresentativeService } from "./services/representative.service";
+import { NodeService } from "./services/node.service";
+import { DesktopService } from "./services/desktop.service";
 import { NOS } from "hw-app-nano";
 import TransportU2F from "@ledgerhq/hw-transport-u2f";
 
@@ -19,12 +20,13 @@ import TransportU2F from "@ledgerhq/hw-transport-u2f";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  @HostListener('window:resize', ['$event']) onResize (e) {
+  @HostListener('window:resize', ['$event']) onResize(e) {
     this.windowHeight = e.target.innerHeight;
-  };
+  }
+
   wallet = this.walletService.wallet;
   node = this.nodeService.node;
-  nanoPrice = this.price.price;
+  nosPrice = this.price.price;
   fiatTimeout = 5 * 60 * 1000; // Update fiat prices every 5 minutes
   inactiveSeconds = 0;
   windowHeight = 1000;
@@ -42,6 +44,7 @@ export class AppComponent implements OnInit {
     private representative: RepresentativeService,
     private router: Router,
     private workPool: WorkPoolService,
+    private desktop: DesktopService,
     public price: PriceService) { }
 
   async ngOnInit() {
@@ -62,17 +65,13 @@ export class AppComponent implements OnInit {
     }
 
     // When the page closes, determine if we should lock the wallet
-    window.addEventListener("beforeunload",  (e) => {
+    window.addEventListener("beforeunload", (e) => {
       if (this.wallet.locked) return; // Already locked, nothing to worry about
-      if (this.settings.settings.lockOnClose == 1) {
-        this.walletService.lockWallet();
-      }
+      this.walletService.lockWallet();
     });
-    window.addEventListener("unload",  (e) => {
+    window.addEventListener("unload", (e) => {
       if (this.wallet.locked) return; // Already locked, nothing to worry about
-      if (this.settings.settings.lockOnClose == 1) {
-        this.walletService.lockWallet();
-      }
+      this.walletService.lockWallet();
     });
 
     // Listen for an nos: protocol link, triggered by the desktop application

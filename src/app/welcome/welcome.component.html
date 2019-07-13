@@ -5,7 +5,7 @@
         <h2>Welcome to NOS Wallet!</h2>
         <span class="uk-text-lead">State of the art wallet for NOS stablecoins</span><br>
       </div>
-      <div class="uk-width-1-1" *ngIf="!wallet.seed">
+      <div class="uk-width-1-1" *ngIf="!isConfigured()">
         <div uk-grid>
           <div class="uk-width-1-1" style="margin-top: 60px;">
             <span class="uk-text-small">To get started, choose an option below to configure your wallet</span>
@@ -19,7 +19,7 @@
         </div>
       </div>
 
-      <div class="uk-width-1-1" *ngIf="wallet.seed">
+      <div class="uk-width-1-1" *ngIf="isConfigured()">
         <div uk-grid>
           <div class="uk-width-1-1" style="margin-top: 60px;">
             <span class="uk-text-small">Welcome back!  It looks like your wallet is already configured.</span>

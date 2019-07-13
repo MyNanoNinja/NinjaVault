@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
-import {UtilService} from "./util.service";
-import {ApiService} from "./api.service";
-import {BigNumber} from 'bignumber.js';
-import {AddressBookService} from "./address-book.service";
+import { UtilService } from './util.service';
+import { ApiService } from './api.service';
+import { BigNumber } from 'bignumber.js';
+import { AddressBookService } from './address-book.service';
 import * as CryptoJS from 'crypto-js';
-import {WorkPoolService} from "./work-pool.service";
-import {WebsocketService} from "./websocket.service";
-import {NOSBlockService} from "./nano-block.service";
-import {NotificationService} from "./notification.service";
-import {AppSettingsService} from "./app-settings.service";
-import {PriceService} from "./price.service";
-import {LedgerService} from "../ledger.service";
+import { WorkPoolService } from './work-pool.service';
+import { WebsocketService } from './websocket.service';
+import { NOSBlockService } from './nano-block.service';
+import { NotificationService } from './notification.service';
+import { AppSettingsService } from './app-settings.service';
+import { PriceService } from './price.service';
+import { LedgerService } from './ledger.service';
 
-export type WalletType = "seed" | "ledger" | "privateKey";
+export type WalletType = 'seed' | 'ledger' | 'privateKey';
 
 export interface WalletAccount {
   id: string;
-  frontier: string|null;
+  frontier: string | null;
   secret: any;
   keyPair: any;
   index: number;
@@ -26,12 +26,12 @@ export interface WalletAccount {
   pendingRaw: BigNumber;
   balanceFiat: number;
   pendingFiat: number;
-  addressBookName: string|null;
+  addressBookName: string | null;
 }
 export interface FullWallet {
   type: WalletType;
   seedBytes: any;
-  seed: string|null;
+  seed: string | null;
   balance: BigNumber;
   pending: BigNumber;
   balanceRaw: BigNumber;
@@ -46,7 +46,7 @@ export interface FullWallet {
 
 @Injectable()
 export class WalletService {
-  nano = 1000000000000000000000000;
+  nos = 10000000000;
   storeKey = `noswallet-wallet`;
 
   wallet: FullWallet = {
@@ -77,16 +77,15 @@ export class WalletService {
     private price: PriceService,
     private workPool: WorkPoolService,
     private websocket: WebsocketService,
-    private nanoBlock: NOSBlockService,
+    private nosBlock: NOSBlockService,
     private ledgerService: LedgerService,
-    private notifications: NotificationService)
-  {
+    private notifications: NotificationService) {
     this.websocket.newTransactions$.subscribe(async (transaction) => {
-      if (!transaction) return; // Not really a new transaction
+      if (!transaction) { return; } // Not really a new transaction
 
       // Find out if this is a send, with our account as a destination or not
       const walletAccountIDs = this.wallet.accounts.map(a => a.id);
-      if (transaction.block.type == 'send' && walletAccountIDs.indexOf(transaction.block.destination) !== -1) {
+      if (transaction.block.type === 'send' && walletAccountIDs.indexOf(transaction.block.destination) !== -1) {
         // Perform an automatic receive
         const walletAccount = this.wallet.accounts.find(a => a.id === transaction.block.destination);
         if (walletAccount) {
@@ -97,7 +96,7 @@ export class WalletService {
           this.addPendingBlock(walletAccount.id, transaction.hash, transaction.amount);
           await this.processPendingBlocks();
         }
-      } else if (transaction.block.type == 'state') {
+      } else if (transaction.block.type === 'state') {
         await this.processStateBlock(transaction);
       }
 
@@ -108,7 +107,7 @@ export class WalletService {
 
     this.addressBook.addressBook$.subscribe(newAddressBook => {
       this.reloadAddressBook();
-    })
+    });
   }
 
   async processStateBlock(transaction) {
@@ -129,11 +128,11 @@ export class WalletService {
   reloadAddressBook() {
     this.wallet.accounts.forEach(account => {
       account.addressBookName = this.addressBook.getAccountName(account.id);
-    })
+    });
   }
 
   getWalletAccount(accountID) {
-    return this.wallet.accounts.find(a => a.id == accountID);
+    return this.wallet.accounts.find(a => a.id === accountID);
   }
 
   async loadStoredWallet() {
@@ -228,7 +227,7 @@ export class WalletService {
     const exportData = this.generateExportData();
     const base64Data = btoa(JSON.stringify(exportData));
 
-    return `https://my.nos.cash/import-wallet#${base64Data}`;
+    return `https://vault.nos.cash/import-wallet#${base64Data}`;
   }
 
   lockWallet() {
@@ -297,12 +296,12 @@ export class WalletService {
     this.wallet.seedBytes = this.util.hex.toUint8(seed);
 
     let emptyTicker = 0;
-    let usedIndices = [];
+    const usedIndices = [];
     let greatestUsedIndex = 0;
     const batchSize = emptyAccountBuffer + 1;
     for (let batch = 0; emptyTicker < emptyAccountBuffer; batch++) {
-      let batchAccounts = {};
-      let batchAccountsArray = [];
+      const batchAccounts = {};
+      const batchAccountsArray = [];
       for (let i = 0; i < batchSize; i++) {
         const index = batch * batchSize + i;
         const accountBytes = this.util.account.generateAccountSecretKeyBytes(this.wallet.seedBytes, index);
@@ -315,24 +314,24 @@ export class WalletService {
         };
         batchAccountsArray.push(accountAddress);
       }
-      let batchResponse = await this.api.accountsFrontiers(batchAccountsArray);
-      for (let accountID in batchResponse.frontiers) {
+      const batchResponse = await this.api.accountsFrontiers(batchAccountsArray);
+      for (const accountID in batchResponse.frontiers) {
         const frontier = batchResponse.frontiers[accountID];
         if (frontier !== batchAccounts[accountID].publicKey) {
           batchAccounts[accountID].used = true;
         }
       }
-      for (let accountID in batchAccounts) {
-        let account = batchAccounts[accountID];
+      for (const accountID in batchAccounts) {
+        const account = batchAccounts[accountID];
         if (account.used) {
-          usedIndices.push(account.index)
+          usedIndices.push(account.index);
           if (account.index > greatestUsedIndex) {
-            greatestUsedIndex = account.index
+            greatestUsedIndex = account.index;
             emptyTicker = 0;
           }
         } else {
           if (account.index > greatestUsedIndex) {
-            emptyTicker ++;
+            emptyTicker++;
           }
         }
       }
@@ -342,7 +341,7 @@ export class WalletService {
         this.addWalletAccount(usedIndices[i], false);
       }
       this.addWalletAccount(usedIndices.length - 1, true);
-    } else{
+    } else {
       this.addWalletAccount();
     }
 
@@ -363,6 +362,7 @@ export class WalletService {
 
   createLedgerWallet() {
     this.resetWallet();
+    console.log(`Creating ledger wallet.... ?`);
 
     this.wallet.type = 'ledger';
     const newAccount = this.addWalletAccount(0);
@@ -371,8 +371,10 @@ export class WalletService {
   }
 
   async createLedgerAccount(index) {
-    const account = await this.ledgerService.getLedgerAccount(index);
+    console.log(`Creating ledger account at index... `, index);
+    const account: any = await this.ledgerService.getLedgerAccount(index);
 
+    console.log(`Got account!`, account);
     const accountID = account.address;
     const addressBookName = this.addressBook.getAccountName(accountID);
 
@@ -462,12 +464,12 @@ export class WalletService {
     const fiatPrice = this.price.price.lastPrice;
 
     this.wallet.accounts.forEach(account => {
-      account.balanceFiat = this.util.nano.rawToNOS(account.balance).times(fiatPrice).toNumber();
-      account.pendingFiat = this.util.nano.rawToNOS(account.pending).times(fiatPrice).toNumber();
+      account.balanceFiat = this.util.nos.rawToNOS(account.balance).times(fiatPrice).toNumber();
+      account.pendingFiat = this.util.nos.rawToNOS(account.pending).times(fiatPrice).toNumber();
     });
 
-    this.wallet.balanceFiat = this.util.nano.rawToNOS(this.wallet.balance).times(fiatPrice).toNumber();
-    this.wallet.pendingFiat = this.util.nano.rawToNOS(this.wallet.pending).times(fiatPrice).toNumber();
+    this.wallet.balanceFiat = this.util.nos.rawToNOS(this.wallet.balance).times(fiatPrice).toNumber();
+    this.wallet.pendingFiat = this.util.nos.rawToNOS(this.wallet.pending).times(fiatPrice).toNumber();
   }
 
   async reloadBalances(reloadPending = true) {
@@ -493,16 +495,16 @@ export class WalletService {
     for (const accountID in accounts.balances) {
       if (!accounts.balances.hasOwnProperty(accountID)) continue;
       // Find the account, update it
-      const walletAccount = this.wallet.accounts.find(a => a.id == accountID);
+      const walletAccount = this.wallet.accounts.find(a => a.id === accountID);
       if (!walletAccount) continue;
       walletAccount.balance = new BigNumber(accounts.balances[accountID].balance);
       walletAccount.pending = new BigNumber(accounts.balances[accountID].pending);
 
-      walletAccount.balanceRaw = new BigNumber(walletAccount.balance).mod(this.nano);
-      walletAccount.pendingRaw = new BigNumber(walletAccount.pending).mod(this.nano);
+      walletAccount.balanceRaw = new BigNumber(walletAccount.balance);
+      walletAccount.pendingRaw = new BigNumber(walletAccount.pending);
 
-      walletAccount.balanceFiat = this.util.nano.rawToNOS(walletAccount.balance).times(fiatPrice).toNumber();
-      walletAccount.pendingFiat = this.util.nano.rawToNOS(walletAccount.pending).times(fiatPrice).toNumber();
+      walletAccount.balanceFiat = this.util.nos.rawToNOS(walletAccount.balance).times(fiatPrice).toNumber();
+      walletAccount.pendingFiat = this.util.nos.rawToNOS(walletAccount.pending).times(fiatPrice).toNumber();
 
       walletAccount.frontier = frontiers.frontiers[accountID] || null;
 
@@ -527,11 +529,11 @@ export class WalletService {
     this.wallet.balance = walletBalance;
     this.wallet.pending = walletPending;
 
-    this.wallet.balanceRaw = new BigNumber(walletBalance).mod(this.nano);
-    this.wallet.pendingRaw = new BigNumber(walletPending).mod(this.nano);
+    this.wallet.balanceRaw = new BigNumber(walletBalance);
+    this.wallet.pendingRaw = new BigNumber(walletPending);
 
-    this.wallet.balanceFiat = this.util.nano.rawToNOS(walletBalance).times(fiatPrice).toNumber();
-    this.wallet.pendingFiat = this.util.nano.rawToNOS(walletPending).times(fiatPrice).toNumber();
+    this.wallet.balanceFiat = this.util.nos.rawToNOS(walletBalance).times(fiatPrice).toNumber();
+    this.wallet.pendingFiat = this.util.nos.rawToNOS(walletPending).times(fiatPrice).toNumber();
 
     // If there is a pending balance, search for the actual pending transactions
     if (reloadPending && walletPending.gt(0)) {
@@ -542,7 +544,7 @@ export class WalletService {
 
 
   async loadWalletAccount(accountIndex, accountID) {
-    let index = accountIndex;
+    const index = accountIndex;
     const addressBookName = this.addressBook.getAccountName(accountID);
 
     const newAccount: WalletAccount = {
@@ -566,23 +568,17 @@ export class WalletService {
     return newAccount;
   }
 
-  async addWalletAccount(accountIndex: number|null = null, reloadBalances: boolean = true) {
+  async addWalletAccount(accountIndex: number | null = null, reloadBalances: boolean = true) {
     // if (!this.wallet.seedBytes) return;
     let index = accountIndex;
-    let nextIndex = index + 1;
     if (index === null) {
-      index = this.wallet.accountsIndex; // Use the existing number, then increment it
+      index = 0; // Use the existing number, then increment it
 
       // Make sure the index is not being used (ie. if you delete acct 3/5, then press add twice, it goes 3, 6, 7)
       while (this.wallet.accounts.find(a => a.index === index)) index++;
-
-      // Find the next available index
-      nextIndex = index + 1;
-      while (this.wallet.accounts.find(a => a.index === nextIndex)) nextIndex++;
-      this.wallet.accountsIndex = nextIndex;
     }
 
-    let newAccount: WalletAccount|null;
+    let newAccount: WalletAccount | null;
 
     if (this.wallet.type === 'privateKey') {
       throw new Error(`Cannot add another account in private key mode`);
@@ -590,15 +586,21 @@ export class WalletService {
       newAccount = await this.createSeedAccount(index);
     } else if (this.wallet.type === 'ledger') {
       try {
+        console.log(`Creating ledger account at index: `, index);
         newAccount = await this.createLedgerAccount(index);
       } catch (err) {
-        this.notifications.sendWarning(`Unable to load account from ledger.  Make sure it is connected`);
+        // this.notifications.sendWarning(`Unable to load account from ledger.  Make sure it is connected`);
         throw err;
       }
 
     }
 
     this.wallet.accounts.push(newAccount);
+
+    // Set new accountsIndex - used when importing wallets.  Only count from 0, won't include custom added ones
+    let nextIndex = 0;
+    while (this.wallet.accounts.find(a => a.index === nextIndex)) nextIndex++;
+    this.wallet.accountsIndex = nextIndex;
 
     if (reloadBalances) await this.reloadBalances();
 
@@ -645,9 +647,9 @@ export class WalletService {
     const pending = await this.api.accountsPending(this.wallet.accounts.map(a => a.id));
     if (!pending || !pending.blocks) return;
 
-    for (let account in pending.blocks) {
+    for (const account in pending.blocks) {
       if (!pending.blocks.hasOwnProperty(account)) continue;
-      for (let block in pending.blocks[account]) {
+      for (const block in pending.blocks[account]) {
         if (!pending.blocks[account].hasOwnProperty(block)) continue;
 
         this.addPendingBlock(account, block, pending.blocks[account][block].amount);
@@ -672,12 +674,12 @@ export class WalletService {
     const walletAccount = this.getWalletAccount(nextBlock.account);
     if (!walletAccount) return; // Dispose of the block, no matching account
 
-    const newHash = await this.nanoBlock.generateReceive(walletAccount, nextBlock.hash, this.isLedgerWallet());
+    const newHash = await this.nosBlock.generateReceive(walletAccount, nextBlock.hash, this.isLedgerWallet());
     if (newHash) {
       if (this.successfulBlocks.length >= 15) this.successfulBlocks.shift();
       this.successfulBlocks.push(nextBlock.hash);
 
-      const receiveAmount = this.util.nano.rawToNOS(nextBlock.amount);
+      const receiveAmount = this.util.nos.rawToNOS(nextBlock.amount);
       this.notifications.sendSuccess(`Successfully received ${receiveAmount.isZero() ? '' : receiveAmount.toFixed(6)} NOS!`);
 
       // await this.promiseSleep(500); // Give the node a chance to make sure its ready to reload all?
@@ -714,7 +716,7 @@ export class WalletService {
   }
 
   generateWalletExport() {
-    let data: any = {
+    const data: any = {
       type: this.wallet.type,
       accounts: this.wallet.accounts.map(a => ({ id: a.id, index: a.index })),
       accountsIndex: this.wallet.accountsIndex,
@@ -724,9 +726,14 @@ export class WalletService {
     }
 
     if (this.wallet.type === 'seed') {
-      data.seed = this.wallet.seed;
+      // Forcefully encrypt the seed so an unlocked wallet is never saved
+      if (!this.wallet.locked) {
+        const encryptedSeed = CryptoJS.AES.encrypt(this.wallet.seed, this.wallet.password || '');
+        data.seed = encryptedSeed.toString();
+      } else {
+        data.seed = this.wallet.seed;
+      }
       data.locked = this.wallet.locked;
-      data.password = this.wallet.locked ? '' : this.wallet.password;
     }
 
     return data;

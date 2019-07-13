@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {WalletService} from "../../services/wallet.service";
 import {NotificationService} from "../../services/notification.service";
-import {LedgerService, LedgerStatus} from "../../ledger.service";
+import {LedgerService, LedgerStatus} from "../../services/ledger.service";
 
 @Component({
   selector: 'app-wallet-widget',
@@ -24,8 +24,8 @@ export class WalletWidgetComponent implements OnInit {
     const modal = UIkit.modal(document.getElementById('unlock-wallet-modal'));
     this.modal = modal;
 
-    this.ledgerService.ledgerStatus$.subscribe((ledgerStatus: string) => {
-      this.ledgerStatus = ledgerStatus;
+    this.ledgerService.ledgerStatus$.subscribe((ledgerStatus: any) => {
+      this.ledgerStatus = ledgerStatus.status;
     })
   }
 
@@ -47,12 +47,19 @@ export class WalletWidgetComponent implements OnInit {
   async reloadLedger() {
     this.notificationService.sendInfo(`Checking Ledger Status...`, { identifier: 'ledger-status', length: 0 })
     try {
+      console.log(`Reloading ledger....`);
       const loaded = await this.ledgerService.loadLedger();
+      console.log(`Got loaded response: `, loaded);
       this.notificationService.removeNotification('ledger-status');
       if (loaded) {
         this.notificationService.sendSuccess(`Successfully connected to Ledger device`);
+      } else if (loaded === false) {
+        this.notificationService.sendError(`Unable to connect to Ledger device`);
       }
     } catch (err) {
+      console.log(`Got error when loading ledger! `, err);
+      this.notificationService.removeNotification('ledger-status');
+      // this.notificationService.sendError(`Unable to load Ledger Device: ${err.message}`);
     }
   }
 
